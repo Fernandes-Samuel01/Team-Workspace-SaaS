@@ -4,6 +4,8 @@ import dotenv from "dotenv"
 import authRoutes from "./routes/auth.route.js"
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import workspaceRoutes from "./routes/workspaceRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 dotenv.config();
 
 
@@ -23,6 +25,8 @@ app.get('/', (req,res)=>{
 });
 
 app.use("/api/auth", authRoutes)
+app.use("/api/workspaces", workspaceRoutes);
+app.use("/api/tasks", taskRoutes);
 
 app.listen(port,()=>{
     connectDB();
