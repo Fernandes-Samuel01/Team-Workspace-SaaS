@@ -1,102 +1,101 @@
-import {
-  PASSWORD_RESET_REQUEST_TEMPLATE,
-  PASSWORD_RESET_SUCCESS_TEMPLATE,
-  VERIFICATION_EMAIL_TEMPLATE,
-} from "./emailTemplate.js";
+// import nodemailer from "nodemailer";
 
-import { mailtrapClient, sender } from "./mailtrap.config.js";
+// import {
+//   PASSWORD_RESET_REQUEST_TEMPLATE,
+//   PASSWORD_RESET_SUCCESS_TEMPLATE,
+//   VERIFICATION_EMAIL_TEMPLATE,
+// } from "./emailTemplate.js";
 
-// ✅ Verification Email
-export const sendVerificationEmail = async (email, verificationToken) => {
-  const recipient = [{ email }];
+// // ✅ Create transporter (Gmail SMTP)
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
 
-  try {
-    const response = await mailtrapClient.send({
-      from: sender,
-      to: recipient,
-      subject: "Verify Your Email",
-      html: VERIFICATION_EMAIL_TEMPLATE.replace(
-        "{verificationCode}",
-        verificationToken
-      ),
-      category: "Email Verification",
-    });
+// // ✅ Verification Email
+// export const sendVerificationEmail = async (email, verificationToken) => {
+//   try {
+//     const htmlContent = VERIFICATION_EMAIL_TEMPLATE.replace(
+//       "{verificationCode}",
+//       verificationToken
+//     );
 
-    console.log("✅ Verification Email sent", response);
-    return response;
-  } catch (error) {
-    console.error("❌ Error sending Verification Email:", error.message);
-    return null; // ✅ IMPORTANT: don't break signup
-  }
-};
+//     const response = await transporter.sendMail({
+//       from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+//       to: email,
+//       subject: "Verify Your Email",
+//       html: htmlContent,
+//     });
 
-// ✅ Welcome Email
-export const sendWelcomeEmail = async (email, name) => {
-  const recipient = [{ email }];
+//     console.log("✅ Verification Email sent", response);
+//     return response;
+//   } catch (error) {
+//     console.error("❌ Error sending Verification Email:", error.message);
+//     return null;
+//   }
+// };
 
-  try {
-    const response = await mailtrapClient.send({
-      from: sender,
-      to: recipient,
-      template_uuid: "d297f0a7-a26d-4624-b980-e2aac34f8625",
-      template_variables: {
-        company_info_name: "MERN Auth",
-        name: name,
-      },
-    });
+// // ✅ Welcome Email
+// export const sendWelcomeEmail = async (email, name) => {
+//   try {
+//     const response = await transporter.sendMail({
+//       from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+//       to: email,
+//       subject: "Welcome to MERN Auth 🎉",
+//       html: `<h2>Welcome, ${name}!</h2><p>Your account has been created successfully.</p>`,
+//     });
 
-    console.log("✅ Welcome Email sent", response);
-    return response;
-  } catch (error) {
-    console.error("❌ Error sending Welcome Email:", error.message);
-    return null; // ✅ IMPORTANT
-  }
-};
+//     console.log("✅ Welcome Email sent", response);
+//     return response;
+//   } catch (error) {
+//     console.error("❌ Error sending Welcome Email:", error.message);
+//     return null;
+//   }
+// };
 
-// ✅ Password Reset Email
-export const sendPasswordResetEmail = async (email, resetURL) => {
-  const recipient = [{ email }];
+// // ✅ Password Reset Email
+// export const sendPasswordResetEmail = async (email, resetURL) => {
+//   try {
+//     const htmlContent = PASSWORD_RESET_REQUEST_TEMPLATE.replace(
+//       "{resetURL}",
+//       resetURL
+//     );
 
-  try {
-    const response = await mailtrapClient.send({
-      from: sender,
-      to: recipient,
-      subject: "Reset Your Password",
-      html: PASSWORD_RESET_REQUEST_TEMPLATE.replace(
-        "{resetURL}",
-        resetURL
-      ),
-      category: "Password Reset",
-    });
+//     const response = await transporter.sendMail({
+//       from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+//       to: email,
+//       subject: "Reset Your Password",
+//       html: htmlContent,
+//     });
 
-    console.log("✅ Password reset email sent", response);
-    return response;
-  } catch (error) {
-    console.error("❌ Error sending password reset email:", error.message);
-    return null;
-  }
-};
+//     console.log("✅ Password reset email sent", response);
+//     return response;
+//   } catch (error) {
+//     console.error("❌ Error sending password reset email:", error.message);
+//     return null;
+//   }
+// };
 
-// ✅ Reset Success Email
-export const sendResetSuccessEmail = async (email) => {
-  const recipient = [{ email }];
+// // ✅ Reset Success Email
+// export const sendResetSuccessEmail = async (email) => {
+//   try {
+//     const response = await transporter.sendMail({
+//       from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+//       to: email,
+//       subject: "Password reset successful",
+//       html: PASSWORD_RESET_SUCCESS_TEMPLATE,
+//     });
 
-  try {
-    const response = await mailtrapClient.send({
-      from: sender,
-      to: recipient,
-      subject: "Password reset successful",
-      html: PASSWORD_RESET_SUCCESS_TEMPLATE,
-      category: "Password",
-    });
-
-    console.log("✅ Reset success email sent", response);
-    return response;
-  } catch (error) {
-    console.error(
-      "❌ Error sending password reset success email:",
-      error.message
-    );
-    return null;
-  }
-};
+//     console.log("✅ Reset success email sent", response);
+//     return response;
+//   } catch (error) {
+//     console.error(
+//       "❌ Error sending password reset success email:",
+//       error.message
+//     );
+//     return null;
+//   }
+// };

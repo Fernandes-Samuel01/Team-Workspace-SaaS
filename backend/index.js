@@ -1,13 +1,16 @@
+import dotenv from "dotenv"
+dotenv.config();
+
 import express from "express";
 import { connectDB } from "./db/connectDB.js";
-import dotenv from "dotenv"
 import authRoutes from "./routes/auth.route.js"
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
-dotenv.config();
 
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 
 const app = express();
 const port = process.env.PORT || 5000;

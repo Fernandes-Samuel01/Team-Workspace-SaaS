@@ -5,25 +5,23 @@ import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js
 import crypto from "crypto";
 
 import {
-  sendPasswordResetEmail,
-  sendResetSuccessEmail,
   sendVerificationEmail,
   sendWelcomeEmail,
-} from "../mailtrap/emails.js"; // ✅ make sure filename matches
+  sendPasswordResetEmail,
+  sendResetSuccessEmail,
+} from "../utils/emails.js";
 
 // ✅ SIGNUP
 export const signup = async (req, res) => {
   const { email, name, password } = req.body;
 
   try {
-    // ✅ FIX: correct validation
     if (!email || !name || !password) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required!" });
     }
 
-    // ✅ better way (findOne instead of find)
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -48,15 +46,13 @@ export const signup = async (req, res) => {
 
     await user.save();
 
-    // ✅ JWT
     generateTokenAndSetCookie(res, user._id);
 
-    // ✅ IMPORTANT: DON'T await (prevents hanging)
+    // ✅ send email (no await)
     sendVerificationEmail(user.email, verificationToken).catch((err) =>
       console.log("Email error:", err.message)
     );
 
-    // ✅ ALWAYS send response
     res.status(201).json({
       success: true,
       message: "User created successfully",
@@ -94,7 +90,7 @@ export const verifyEmail = async (req, res) => {
 
     await user.save();
 
-    // ✅ DON'T await
+    // ✅ send welcome email
     sendWelcomeEmail(user.email, user.name).catch((err) =>
       console.log("Email error:", err.message)
     );
@@ -185,7 +181,6 @@ export const forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // ✅ DON'T await
     sendPasswordResetEmail(
       user.email,
       `${process.env.CLIENT_URL}/reset-password/${resetToken}`
@@ -227,7 +222,6 @@ export const resetPassword = async (req, res) => {
 
     await user.save();
 
-    // ✅ DON'T await
     sendResetSuccessEmail(user.email).catch((err) =>
       console.log("Email error:", err.message)
     );
