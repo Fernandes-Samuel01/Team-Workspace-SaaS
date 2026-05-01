@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
@@ -17,17 +16,19 @@ export const signup = async (req, res) => {
 
   try {
     if (!email || !name || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "All fields are required!" });
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required!",
+      });
     }
 
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -48,7 +49,6 @@ export const signup = async (req, res) => {
 
     generateTokenAndSetCookie(res, user._id);
 
-    // ✅ send email (no await)
     sendVerificationEmail(user.email, verificationToken).catch((err) =>
       console.log("Email error:", err.message)
     );
@@ -90,7 +90,6 @@ export const verifyEmail = async (req, res) => {
 
     await user.save();
 
-    // ✅ send welcome email
     sendWelcomeEmail(user.email, user.name).catch((err) =>
       console.log("Email error:", err.message)
     );
@@ -120,22 +119,25 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid credentials" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials",
+      });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid credentials" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid credentials",
+      });
     }
 
     generateTokenAndSetCookie(res, user._id);
 
-    user.lastDate = new Date();
+    // ✅ FIXED (was lastDate ❌)
+    user.lastLogin = new Date();
     await user.save();
 
     res.status(200).json({
@@ -155,9 +157,10 @@ export const login = async (req, res) => {
 // ✅ LOGOUT
 export const logout = async (req, res) => {
   res.clearCookie("token");
-  res
-    .status(200)
-    .json({ success: true, message: "Logged out successfully" });
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 };
 
 // ✅ FORGOT PASSWORD
@@ -168,16 +171,16 @@ export const forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
-    const resetTokenExpireAt = Date.now() + 60 * 60 * 1000;
 
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpiresAt = resetTokenExpireAt;
+    user.resetPasswordExpiresAt = Date.now() + 60 * 60 * 1000;
 
     await user.save();
 
@@ -199,7 +202,7 @@ export const forgotPassword = async (req, res) => {
 // ✅ RESET PASSWORD
 export const resetPassword = async (req, res) => {
   try {
-    const token = req.params.token;
+    const { token } = req.params;
     const { password } = req.body;
 
     const user = await User.findOne({
@@ -217,8 +220,8 @@ export const resetPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     user.password = hashedPassword;
-    user.resetPasswordExpiresAt = undefined;
     user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;
 
     await user.save();
 
@@ -236,26 +239,27 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// ✅ CHECK AUTH
+// ✅ CHECK AUTH (FINAL FIX)
 export const checkAuth = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.userId).select("-password");
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
     }
 
     res.status(200).json({
       success: true,
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
+      user,
     });
   } catch (error) {
     console.log("Check auth error:", error);
-    res.status(400).json({ success: false, message: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
