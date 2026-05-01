@@ -30,8 +30,8 @@ const Workspace = () => {
 
         try {
             await axios.post(
-                `${API_URL}/tasks`,
-                { title, workspace: id }, // ✅ correct field name
+                `${import.meta.env.VITE_API_URL}/tasks`,
+                { title, workspace: id },
                 { withCredentials: true }
             );
             fetchTasks();

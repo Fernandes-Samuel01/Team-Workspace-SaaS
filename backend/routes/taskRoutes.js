@@ -1,5 +1,5 @@
 import express from "express";
-import Task from "../models/Task.js"; // ✅ fixed filename
+import Task from "../models/Task.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
@@ -7,17 +7,20 @@ const router = express.Router();
 // ✅ CREATE TASK
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const { title, description, workspaceId } = req.body;
+    const { title, description, workspace, workspaceId } = req.body;
 
-    if (!title || !workspaceId) {
-      return res.status(400).json({ message: "Title and workspaceId required" });
+    // 🔥 support BOTH (safe fix)
+    const finalWorkspace = workspace || workspaceId;
+
+    if (!title || !finalWorkspace) {
+      return res.status(400).json({ message: "Title and workspace required" });
     }
 
     const task = new Task({
       title,
       description: description || "",
-      workspace: workspaceId,
-      assignedTo: req.userId, // ✅ link task to logged-in user
+      workspace: finalWorkspace,
+      assignedTo: req.userId,
     });
 
     await task.save();
@@ -34,7 +37,7 @@ router.get("/:workspaceId", verifyToken, async (req, res) => {
   try {
     const tasks = await Task.find({
       workspace: req.params.workspaceId,
-      assignedTo: req.userId, // ✅ only user's tasks
+      assignedTo: req.userId,
     });
 
     res.status(200).json(tasks);
