@@ -1,5 +1,5 @@
 import express from "express";
-import Task from "../models/task.js"; // ✅ fixed filename
+import Task from "../models/Task.js"; // ✅ fixed filename
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();

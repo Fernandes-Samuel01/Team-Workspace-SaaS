@@ -1,5 +1,5 @@
 import express from "express";
-import Workspace from "../models/workspace.js";
+import Workspace from "../models/Workspace.js";
 import { verifyToken } from "../middleware/verifyToken.js";
 
 const router = express.Router();
