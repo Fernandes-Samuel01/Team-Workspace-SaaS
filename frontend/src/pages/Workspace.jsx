@@ -2,78 +2,79 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Workspace = () => {
     const { id } = useParams();
-
     const [tasks, setTasks] = useState([]);
 
+    // ✅ FETCH TASKS
     const fetchTasks = async () => {
         try {
             const res = await axios.get(
-                `http://localhost:5000/api/tasks/${id}`,
+                `${API_URL}/tasks/${id}`,
                 { withCredentials: true }
             );
 
-            // ✅ safety
-            if (Array.isArray(res.data)) {
-                setTasks(res.data);
-            } else {
-                setTasks([]);
-            }
+            setTasks(Array.isArray(res.data) ? res.data : []);
         } catch (error) {
             console.log("Fetch error:", error);
             setTasks([]);
         }
     };
 
+    // ✅ CREATE TASK
     const createTask = async () => {
         const title = prompt("Enter task");
         if (!title) return;
 
         try {
             await axios.post(
-                "http://localhost:5000/api/tasks",
-                { title, workspaceId: id },
+                `${API_URL}/tasks`,
+                { title, workspace: id }, // ✅ correct field name
                 { withCredentials: true }
             );
             fetchTasks();
         } catch (error) {
-            console.log(error);
+            console.log("Create error:", error);
         }
     };
 
+    // ✅ UPDATE STATUS
     const updateStatus = async (taskId, newStatus) => {
         try {
             await axios.put(
-                `http://localhost:5000/api/tasks/${taskId}`,
+                `${API_URL}/tasks/${taskId}`,
                 { status: newStatus },
                 { withCredentials: true }
             );
             fetchTasks();
         } catch (error) {
-            console.log(error);
+            console.log("Update error:", error);
         }
     };
 
+    // ✅ DELETE TASK
     const deleteTask = async (taskId) => {
         try {
             await axios.delete(
-                `http://localhost:5000/api/tasks/${taskId}`,
+                `${API_URL}/tasks/${taskId}`,
                 { withCredentials: true }
             );
             fetchTasks();
         } catch (error) {
-            console.log(error);
+            console.log("Delete error:", error);
         }
     };
 
+    // ✅ INVITE USER
     const inviteUser = async () => {
         const email = prompt("Enter user email");
         if (!email) return;
 
         try {
             await axios.post(
-                `http://localhost:5000/api/workspaces/${id}/invite`,
+                `${API_URL}/workspaces/${id}/invite`,
                 { email },
                 { withCredentials: true }
             );
@@ -88,7 +89,7 @@ const Workspace = () => {
         fetchTasks();
     }, []);
 
-    // 🧠 split tasks into columns
+    // 🧠 split tasks
     const todo = tasks.filter((t) => t.status === "todo");
     const inProgress = tasks.filter((t) => t.status === "in-progress");
     const done = tasks.filter((t) => t.status === "done");
@@ -113,7 +114,6 @@ const Workspace = () => {
                         <p className="font-semibold">{task.title}</p>
 
                         <div className="flex justify-between mt-2 text-sm">
-                            {/* Move buttons */}
                             <div className="flex gap-1">
                                 {status !== "todo" && (
                                     <button
@@ -138,7 +138,6 @@ const Workspace = () => {
                                 )}
                             </div>
 
-                            {/* Delete */}
                             <button
                                 onClick={() => deleteTask(task._id)}
                                 className="bg-red-600 px-2 rounded"

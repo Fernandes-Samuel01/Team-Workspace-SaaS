@@ -19,7 +19,7 @@ const Dashboard = () => {
 	// ✅ Fetch workspaces
 	const fetchWorkspaces = async () => {
 		try {
-			const res = await axios.get("http://localhost:5000/api/workspaces", {
+			const res = await axios.get(`${import.meta.env.VITE_API_URL}/workspaces`, {
 				withCredentials: true,
 			});
 
@@ -46,8 +46,7 @@ const Dashboard = () => {
 		if (!name) return;
 
 		try {
-			await axios.post(
-				"http://localhost:5000/api/workspaces",
+			await axios.post(`${import.meta.env.VITE_API_URL}/workspaces`,
 				{ name },
 				{ withCredentials: true }
 			);
@@ -63,8 +62,7 @@ const Dashboard = () => {
 		if (!confirmDelete) return;
 
 		try {
-			await axios.delete(
-				`http://localhost:5000/api/workspaces/${id}`,
+			await axios.delete(`${import.meta.env.VITE_API_URL}/workspaces/${id}`,
 				{ withCredentials: true }
 			);
 
