@@ -1,131 +1,219 @@
-# MERN Stack Authentication Boilerplate
+# 🚀 Team Workspace SaaS (MERN)
 
-This is a full-stack authentication starter built using the MERN stack (MongoDB, Express.js, React, Node.js). It includes essential user auth features like signup, login, logout, email verification, and password reset, all integrated with Mailtrap for email testing.
+A full-stack SaaS-style team workspace application where users can create workspaces, manage tasks using a Kanban board, and collaborate with others.
 
----
-
-## Live Preview
-
-**Frontend**: [https://mern-auth-gajendra.vercel.app](https://mern-auth-gajendra.vercel.app)
+Built using the **MERN stack** with authentication, email verification, and a clean UI.
 
 ---
 
-## Technologies Used
+## 🌐 Live Demo
 
-### Frontend:
-- React.js
-- Vite
-- Tailwind CSS
-- Zustand (for state management)
-
-### Backend:
-- Node.js
-- Express.js
-- MongoDB (with Mongoose)
-- Mailtrap (for transactional emails)
+* 🔗 Frontend: https://mern-saas-eight.vercel.app
+* 🔗 Backend API: https://mern-backend-wuhf.onrender.com
 
 ---
 
-## Features
+## ✨ Features
 
-- User registration and login with JWT
-- Email verification with OTP
-- Forgot password and reset functionality
-- Protected routes with authentication middleware
-- Zustand for managing frontend auth state
-- Tailwind CSS-based modern UI
-- Mailtrap integration for development email testing
-- Modular and well-structured folder organization
+### 🔐 Authentication System
 
----
-
-## Folder Structure
-
-mern-auth/
-
-React frontend
-├── client/ 
-│ └── .env.example
-
-Express backend
-├── server/ 
-│ └── .env.example
-
-├── README.md
-
+* User signup & login
+* Email verification (via Mailtrap sandbox)
+* Block login if user is not verified
+* JWT-based authentication with cookies
+* Password reset via email
 
 ---
 
-## Getting Started
+### 📁 Workspace Management
 
-1. **Clone the repository**
+* Create workspaces
+* View all user workspaces
+* Delete workspaces
+* Invite users to a workspace via email
+
+---
+
+### ✅ Task Management (Kanban Board)
+
+* Create tasks
+* Move tasks between:
+
+  * Todo
+  * In Progress
+  * Done
+* Delete tasks
+* Tasks scoped per workspace
+
+---
+
+### 🎨 UI/UX Improvements
+
+* Replaced all `prompt()` with proper input fields
+* Clean dashboard with workspace creation input
+* Workspace board with task + invite inputs
+* Responsive and modern UI using Tailwind CSS
+* Smooth animations using Motion
+
+---
+
+### 📧 Email System
+
+* Email verification codes
+* Welcome email
+* Password reset email
+* Implemented using Mailtrap Email Sandbox (no domain required)
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React (Vite)
+* Tailwind CSS
+* Axios
+* React Router
+* Motion (animations)
+
+### Backend
+
+* Node.js
+* Express.js
+* MongoDB (Mongoose)
+* JWT Authentication
+* Nodemailer
+
+### Deployment
+
+* Frontend → Vercel
+* Backend → Render
+* Database → MongoDB Atlas
+
+---
+
+## ⚙️ Environment Variables
+
+### 📁 Frontend (`/frontend/.env`)
+
+```env
+VITE_API_URL=https://mern-backend-wuhf.onrender.com/api
+```
+
+---
+
+### 📁 Backend (`/backend/.env`)
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+NODE_ENV=production
+
+CLIENT_URL=https://mern-saas-eight.vercel.app
+
+MAILTRAP_USER=your_mailtrap_user
+MAILTRAP_PASS=your_mailtrap_password
+```
+
+---
+
+## 📦 Installation & Setup
+
+### 1️⃣ Clone the repository
+
 ```bash
-git clone https://github.com/yourusername/mern-auth.git
-cd mern-auth
+git clone https://github.com/Fernandes-Samuel01/Team-Workspace-Saas.git
+cd Team-Workspace-SaaS
 ```
-*Split Terminal* 
-<br>
-``(ctrl+shift+5)``
-<br>
 
-2. **Install and run the frontend**
+---
+
+### 2️⃣ Backend Setup
+
+```bash
+cd backend
+npm install
+npm run dev
 ```
+
+---
+
+### 3️⃣ Frontend Setup
+
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-3. **Install and run the backend**
+---
+
+## 🚀 Deployment Guide
+
+### Backend (Render)
+
+* Create new Web Service
+* Root Directory: `backend`
+* Build Command: `npm install`
+* Start Command: `node index.js`
+* Add environment variables
+
+---
+
+### Frontend (Vercel)
+
+* Import GitHub repo
+* Framework: Vite
+* Root Directory: `frontend`
+* Build Command: `npm run build`
+* Output Directory: `dist`
+* Add:
+
+```env
+VITE_API_URL=https://mern-backend-wuhf.onrender.com/api
 ```
-cd backend
-npm install
-npm run dev
-```
-Ensure MongoDB is running locally or provide a remote URI.
-
-After cloning the repo, rename both `.env.example` files to `.env` and fill in your credentials.
 
 ---
 
-## API Endpoints
+## 🔐 Authentication Flow
 
-All routes are prefixed with `/api/auth`
-
-| Method | Endpoint                  | Description                     |
-|--------|---------------------------|---------------------------------|
-| GET    | `/check-auth`             | Check if user is authenticated  |
-| POST   | `/signup`                 | Create a new user               |
-| POST   | `/login`                  | Authenticate existing user      |
-| POST   | `/logout`                 | Clear the session token         |
-| POST   | `/verify-email`           | Verify user with OTP            |
-| POST   | `/forgot-password`        | Send reset link to email        |
-| POST   | `/reset-password/:token`  | Reset password with token       |
+1. User signs up
+2. Verification code sent via email (Mailtrap)
+3. User verifies account
+4. Login allowed only if verified
+5. JWT stored in cookies
 
 ---
 
-## Deployment
+## 📌 Key Learnings
 
-For frontend deployment, use platforms like **Vercel** or **Netlify**.
-
-For backend deployment, use platforms like **Render**, **Railway**, or **Heroku**.
-
----
-
-## Contributing
-
-Fork the repo, make your changes, and submit a pull request.  
-Feel free to open issues or request new features.
+* Building a full-stack SaaS application
+* Authentication & authorization handling
+* Email workflows (verification, reset)
+* REST API design
+* State management in React
+* Deployment and environment handling
+* CORS & production debugging
 
 ---
 
-## Author
+## 📈 Future Improvements (Optional)
 
-Developed by **Gajendra Rao**.  
-Open to contributions, improvements, and collaborations.
+* Role-based access (admin/member permissions)
+* Real-time updates (WebSockets)
+* Drag & drop tasks
+* Notifications system
+* File attachments in tasks
 
+---
 
+## 👨‍💻 Author
 
+**Samuel Fernandes**
 
+---
 
+## ⭐ Show Your Support
 
-
+If you found this project useful, give it a ⭐ on GitHub!
