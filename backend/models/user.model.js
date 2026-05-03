@@ -1,37 +1,45 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt"
 
-const userSchema = new mongoose.Schema({
-    email:{
-        type: String,
-        required: true,
-        unique: true,
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,   // ✅ normalize
+      trim: true,        // ✅ remove spaces
     },
     password: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
-    name : {
-        type: String,
-        required: true,
+    name: {
+      type: String,
+      required: true,
+      trim: true,        // ✅ clean input
     },
-    lastLogin : {
-        type: Date,
-        default: Date.now
+    lastLogin: {
+      type: Date,
+      default: Date.now,
     },
     isVerified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
-    //some more value for additional feature
-    resetPasswordToken : String,
+
+    // 🔐 Password reset
+    resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
+
+    // 📩 Email verification
     verificationToken: String,
     verificationTokenExpiresAt: Date,
-},{
+  },
+  {
     timestamps: true,
-})
+  }
+);
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;

@@ -49,13 +49,14 @@ export const signup = async (req, res) => {
 
     generateTokenAndSetCookie(res, user._id);
 
+    // ✅ send email (non-blocking)
     sendVerificationEmail(user.email, verificationToken).catch((err) =>
       console.log("Email error:", err.message)
     );
 
     res.status(201).json({
       success: true,
-      message: "User created successfully",
+      message: "User created successfully. Please verify your email.",
       user: {
         ...user._doc,
         password: undefined,
@@ -111,7 +112,7 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-// ✅ LOGIN
+// ✅ LOGIN (🔥 UPDATED)
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -122,6 +123,14 @@ export const login = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Invalid credentials",
+      });
+    }
+
+    // 🔥 NEW: block if not verified
+    if (!user.isVerified) {
+      return res.status(403).json({
+        success: false,
+        message: "Please verify your email before logging in",
       });
     }
 
@@ -136,7 +145,6 @@ export const login = async (req, res) => {
 
     generateTokenAndSetCookie(res, user._id);
 
-    // ✅ FIXED (was lastDate ❌)
     user.lastLogin = new Date();
     await user.save();
 
@@ -239,7 +247,7 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// ✅ CHECK AUTH (FINAL FIX)
+// ✅ CHECK AUTH
 export const checkAuth = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-password");
