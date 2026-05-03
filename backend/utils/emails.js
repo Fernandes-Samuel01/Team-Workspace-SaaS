@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
+
 import nodemailer from "nodemailer";
 
 import {
@@ -8,28 +9,19 @@ import {
   VERIFICATION_EMAIL_TEMPLATE,
 } from "../mailtrap/emailTemplate.js";
 
-// ✅ Gmail SMTP transporter (FIXED)
+// ✅ MAILTRAP SMTP (REPLACED GMAIL)
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
   auth: {
-    user: process.env.EMAIL_USER?.trim(),
-    pass: process.env.EMAIL_PASS?.trim(),
+    user: process.env.MAILTRAP_USER,
+    pass: process.env.MAILTRAP_PASS,
   },
 });
 
-console.log("USER:", JSON.stringify(process.env.EMAIL_USER));
-console.log("PASS:", JSON.stringify(process.env.EMAIL_PASS));
-
-// ✅ Debug (will confirm working)
-// transporter.verify((error, success) => {
-//   if (error) {
-//     console.log("❌ SMTP Error:", error);
-//   } else {
-//     console.log("✅ SMTP Ready");
-//   }
-// });
+// ❌ REMOVE THESE (security risk)
+// console.log("USER:", JSON.stringify(process.env.EMAIL_USER));
+// console.log("PASS:", JSON.stringify(process.env.EMAIL_PASS));
 
 // ✅ Verification Email
 export const sendVerificationEmail = async (email, verificationToken) => {
@@ -40,7 +32,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
     );
 
     const response = await transporter.sendMail({
-      from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+      from: '"MERN SaaS" <no-reply@mern.com>',
       to: email,
       subject: "Verify Your Email",
       html,
@@ -58,9 +50,9 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 export const sendWelcomeEmail = async (email, name) => {
   try {
     const response = await transporter.sendMail({
-      from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+      from: '"MERN SaaS" <no-reply@mern.com>',
       to: email,
-      subject: "Welcome to MERN Auth 🎉",
+      subject: "Welcome 🎉",
       html: `<h2>Welcome ${name}!</h2><p>Your account is ready.</p>`,
     });
 
@@ -81,7 +73,7 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
     );
 
     const response = await transporter.sendMail({
-      from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+      from: '"MERN SaaS" <no-reply@mern.com>',
       to: email,
       subject: "Reset Your Password",
       html,
@@ -99,7 +91,7 @@ export const sendPasswordResetEmail = async (email, resetURL) => {
 export const sendResetSuccessEmail = async (email) => {
   try {
     const response = await transporter.sendMail({
-      from: `"MERN Auth" <${process.env.EMAIL_USER}>`,
+      from: '"MERN SaaS" <no-reply@mern.com>',
       to: email,
       subject: "Password Reset Successful",
       html: PASSWORD_RESET_SUCCESS_TEMPLATE,
